@@ -1,0 +1,52 @@
+/* -------------------------------
+   Navbar Styling
+--------------------------------*/
+
+/* Navbar background */
+.navbar {
+  background-color: #BB2533;
+}
+
+/* Default tab text */
+.navbar .navbar-brand,
+.navbar .navbar-nav > li > a {
+  color: white !important;
+}
+
+/* Hovered tab text: blue, transparent background */
+.navbar .navbar-brand:hover,
+.navbar .navbar-nav > li > a:hover {
+  color: #1F2742 !important;
+  background-color: transparent !important;
+}
+
+/* Active tab text: blue, transparent background, no border */
+.navbar .navbar-nav > .active > a,
+.navbar .navbar-nav > .active > a:focus,
+.navbar .navbar-nav > .active > a:hover {
+  color: #1F2742 !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Prevent brand color change on hover */
+.navbar .navbar-brand:hover {
+  color: white !important;
+  background-color: transparent !important;
+}
+
+
+/* -------------------------------
+   Card Header Styling
+--------------------------------*/
+
+.card .card-header,
+.card-header {
+  background-color: #BB2533 !important;
+  color: white !important;
+  border-bottom: none !important;
+}
+
+body {
+  background-color: #1F2742 !important;  /* Light gray, change as desired */
+}
