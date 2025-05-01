@@ -86,7 +86,7 @@ df <- data.frame(
 
 df2 <- df %>% dplyr::mutate(view_change = ((view2019 - view2015) / view2015) * 100)
 
-shape <- st_read("Final/world")
+shape <- st_read("world")
 
 subregions <- c("Micronesia", "Eastern Asia", "Western Europe", "Southern Europe", "South America",
                 "Central America", "Caribbean", "Northern Africa", "Western Africa", "Northern Europe",
@@ -119,23 +119,16 @@ region_group <- sapply(subregions, get_region)
 
 grouped_df <- data.frame(Subregion = subregions, Region = region_group)
 
-shape2 <- shape %>% dplyr::inner_join(grouped_df, by = c("region" = "Subregion"))
-
-shape3 <- shape2 %>% dplyr::inner_join(df2, by = c("Region" = "region"))
-
-shape3_clean <- shape3 %>% select(-region)
+shape3 <- shape %>% dplyr::inner_join(grouped_df, by = c("region" = "Subregion"))
 
 # combining regions into singular shapes so that we need to store less data
-shape_dissolved <- shape3_clean %>%
+shape_dissolved <- shape3 %>%
   dplyr::group_by(Region) %>%
-  dplyr::summarise(
-    view2019 = sum(view2019, na.rm = TRUE),
-    view2015 = sum(view2015, na.rm = TRUE),
-    view_change = sum(view_change, na.rm = TRUE),
-    .groups = "drop"
-  )
+  dplyr::summarise()
 
-sf::st_write(shape_dissolved, dsn = "viewership.geojson", layer = "wwcviewership.geojson")
+shape_final <- shape_dissolved %>% inner_join(df2, by = c("Region" = "region"))
+
+sf::st_write(shape_final, dsn = "viewership.geojson", layer = "wwcviewership.geojson")
 
 ## 1.6 Creating WWC Events with only certain columns to minimize amount of data
 wwcevents_selected <- wwcevents %>% select(location.x, location.y, team.name, type.name, player.name) %>% filter(!is.na(location.x))

@@ -1,3 +1,9 @@
+library(bslib)
+
+### ABOUT PAGE ###
+
+# contains the nav_panel used to create the static "About" page
+
 about_panel <- nav_panel(title = "About", 
                           fluidPage(
                             layout_columns(
