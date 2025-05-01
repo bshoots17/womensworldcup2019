@@ -19,7 +19,6 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(ggimage)
-library(RSQLite)
 
 source("deps.R")
 source("aesthetics.R")
@@ -35,17 +34,17 @@ labels <- c("Group Stage Match 1",
                        "Semifinal",
                        "Final")
 
-shots <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/shots.csv")
+shots <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/data/shots.csv")
 
-top_scorers <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/top_scorers.csv")
+top_scorers <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/data/top_scorers.csv")
 
-uswnt_games <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/uswnt_games.csv")
+uswnt_games <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/data/uswnt_games.csv")
 
-viewership <- read_sf("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/viewership.geo.json")
+viewership <- read_sf("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/data/viewership.geo.json")
 
-wwcevents <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/wwcevents.csv")
+wwcevents <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/data/wwcevents.csv")
 
-prizes <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/prizes.csv") %>% rename("prize_money" = "Prize.Money..millions.USD.")
+prizes <- read.csv("https://raw.githubusercontent.com/bshoots17/womensworldcup2019/refs/heads/main/data/prizes.csv") %>% rename("prize_money" = "Prize.Money..millions.USD.")
 
 player_opts <- unique(wwcevents$player.name)
 
