@@ -105,10 +105,19 @@ player_opts <- unique(wwcevents$player.name)
 # ---- UI ----
 # ============================================== #
 
-ui <- page_navbar(
+ui <- tagList(
+  # This goes in the HTML head
+  tags$head(
+    tags$link(rel = "icon", type = "image/png", href = "logo.png")
+  ), 
+  page_navbar(
   
   ## ---- Title and Aesthetics ----
-  title = app_title,
+  title = tagList(
+    # Logo
+    tags$img(src = "logo.png", height = "40px", style = "margin-top: -5px; margin-right: 10px;"),
+    "2019 Women's World Cup"
+  ),
   theme = bs_theme(version = 5, bootswatch = "journal"),
   header = tagList(red_card, image_settings,
   tags$head(tags$link(rel = "stylesheet", 
@@ -215,7 +224,7 @@ ui <- page_navbar(
               card(
                 p_prize),
               col_widths = c(8, 4))))
-)
+))
 
 # ============================================== #
 # ---- SERVER ----

@@ -6,12 +6,6 @@ library(ggplot2)
 library(ggthemes)
 library(bslib)
 
-app_title <- tagList(
-  # Logo
-  tags$img(src = "logo.png", height = "40px", style = "margin-top: -5px; margin-right: 10px;"),
-  "2019 Women's World Cup"
-)
-
 red_card <- tags$head(tags$style(HTML("
   .red-card {
       background-color: #BB2533 !important;
