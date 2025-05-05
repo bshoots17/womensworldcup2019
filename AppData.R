@@ -16,6 +16,7 @@ library(StatsBombR)
 library(tidyverse)
 library(httr)
 library(jsonlite)
+library(sf)
 
 # ============================================== #
 # ---- CREATE CSV DATAFRAMES FOR SHINY APP ----
