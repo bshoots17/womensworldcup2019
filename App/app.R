@@ -253,7 +253,7 @@ server <- function(input, output) {
   if (input$heatmap == "All") {
     player_data <- wwcevents %>% filter(player.name == input$player)
 
-    title <- paste0(input$player, "'s Impact on ", player_data$team.name[1], " Games, All Actions")
+    title <- paste0(input$player, "'s Impact on ", player_data$team.name[1], "  Games, All Actions")
 
   } else {
     player_data <- wwcevents %>%
