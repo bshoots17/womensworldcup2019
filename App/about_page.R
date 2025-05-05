@@ -1,6 +1,24 @@
+# ============================================== #
+# File: about_page.R
+# Description: Shiny web application built with R.
+#              This file contains the aesthetics
+#              and text needed for the About Page.
+#
+# Author: Bianca Schutz
+# Date Created: April 24, 2025
+# Last Modified: May 5, 2025
+
+# ============================================== #
+# ---- Set-Up ----
+# ============================================== #
+
+## ---- Packages ----
+
 library(bslib)
 
-### ABOUT PAGE ###
+# ============================================== #
+# ---- About Page ----
+# ============================================== #
 
 # contains the nav_panel used to create the static "About" page
 

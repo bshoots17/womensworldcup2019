@@ -1,16 +1,27 @@
-# ====================================================
-# 0. SETUP
-# ====================================================
+# ============================================== #
+# File: AppData.R
+# Description: Contains code used to create the 
+#              data files available in App/data.
+#
+# Author: Bianca Schutz
+# Date Created: April 24, 2025
+# Last Modified: May 5, 2025
 
-## 0.1 Load Packages
+# ============================================== #
+# ---- 0. Set-Up ----
+# ============================================== #
+
+## ---- 0.1 Load Packages ----
 library(StatsBombR)
 library(tidyverse)
+library(httr)
+library(jsonlite)
 
-# ====================================================
-# 1. CREATE CSV DATAFRAMES FOR SHINY APP
-# ====================================================
+# ============================================== #
+# ---- CREATE CSV DATAFRAMES FOR SHINY APP ----
+# ============================================== #
 
-## 1.1 Load WWC StatsBomb Data
+## ---- Load WWC StatsBomb Data ----
 Comps <- FreeCompetitions()
 
 wwc = Comps %>%
@@ -20,7 +31,7 @@ wwcmatches <- FreeMatches(wwc)
 
 wwcevents <- cleanlocations(free_allevents(wwcmatches))
 
-### 1.2 Creating Top Scorers DataFrame for Bar Graph ###
+## ---- 1.2 Creating Top Scorers DataFrame for Bar Graph ----
 top_scorers <- wwcevents %>% mutate(is_goal = replace_na(ifelse(shot.outcome.name == "Goal", TRUE, FALSE), FALSE)) %>% group_by(player.name) %>% summarize(goals_scored = sum(is_goal)) %>% arrange(desc(goals_scored)) %>% head(10)
 
 # cleaning up some player names so they match the names people know them by
@@ -45,7 +56,7 @@ top_scorers$last_name <- gsub("Silva", "Cristiane", top_scorers$last_name)
 
 # write.csv(top_scorers, "top_scorers.csv")
 
-## 1.3 Creating USWNT Shots DataFrame
+## ---- 1.3 Creating USWNT Shots DataFrame ----
 
 shots <- wwcevents %>% filter(type.name == "Shot", team.name == "United States Women's") %>% select(shot.outcome.name, match_id, team.name, location.x, location.y, shot.type.name) %>% rename("shot_outcome" = "shot.outcome.name")
 
@@ -57,7 +68,7 @@ shots$shot_outcome <- factor(shots$shot_outcome,
 
 # write.csv(shots, "shots.csv")
 
-## 1.4 Creating USWNT Matches Key
+## ---- 1.4 Creating USWNT Matches Key ----
 
 uswnt_games <- wwcmatches %>% filter(home_team.home_team_id == 1214 | away_team.away_team_id == 1214) %>% select(-away_team.managers, -home_team.managers)
 
@@ -74,7 +85,7 @@ uswnt_games$label <- labels
 # write.csv(uswnt_games, "uswnt_games.csv")
 
 
-## 1.5 Creating Viewership Shapefile 
+## ---- 1.5 Creating Viewership Shapefile ----
 
 df <- data.frame(
   region = c("Africa & Middle East", "Asia", "Europe", 
@@ -130,21 +141,41 @@ shape_final <- shape_dissolved %>% inner_join(df2, by = c("Region" = "region"))
 
 sf::st_write(shape_final, dsn = "viewership.geojson", layer = "wwcviewership.geojson")
 
-## 1.6 Creating WWC Events with only certain columns to minimize amount of data
+## ---- 1.6 Subsetting WWC Events ---- 
+# with only certain columns to minimize amount of data
+
 wwcevents_selected <- wwcevents %>% select(location.x, location.y, team.name, type.name, player.name) %>% filter(!is.na(location.x))
 
 # write.csv(wwcevents_selected, "wwcevents.csv")
 
-## 1.7 Creating Prize Money DataFrame
+## ---- 1.7 Creating Prize Money DataFrame ----
 
-library(RSQLite)
-
-# con <- RSQLite::dbConnect(RSQLite::SQLite(), "Final/uswnt_wwc_2019.db")
-# prizes <- dbGetQuery(con, statement = "SELECT * FROM prizes")
+df <- data.frame(
+  Tournament = c(
+    "Women's World Cup", "World Cup", "Women's World Cup", "World Cup",
+    "Women's World Cup", "World Cup", "Women's World Cup", "World Cup",
+    "Women's World Cup", "World Cup", "Women's World Cup", "World Cup",
+    "Women's World Cup", "World Cup"
+  ),
+  Prize_Money_Millions_USD = c(
+    6, 128, 8, 96, 5.8, 64, 1.6, 22, 2, 24, 2.6, 28, 4, 38
+  ),
+  Position = c(
+    "Group stage", "Group stage", "Last 16", "Last 16", "Quarter-finals", "Quarter-finals",
+    "Fourth place", "Fourth place", "Third place", "Third place", "Runners-up", "Runners-up",
+    "Winners", "Winners"
+  ),
+  Amount = c(
+    "$6,000,000", "$128,000,000", "$8,000,000", "$96,000,000", "$5,800,000", "$64,000,000",
+    "$1,600,000", "$22,000,000", "$2,000,000", "$24,000,000", "$2,600,000", "$28,000,000",
+    "$4,000,000", "$38,000,000"
+  ),
+  stringsAsFactors = FALSE
+)
 
 # write.csv(prizes, "prizes.csv")
 
-## 1.8 Creating Stadiums DataFrame
+## ---- 1.8 Creating Stadiums DataFrame ----
 
 library(httr)
 library(jsonlite)

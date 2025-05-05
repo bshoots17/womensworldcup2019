@@ -5,7 +5,7 @@
 #
 # Author: Bianca Schutz
 # Date Created: April 24, 2025
-# Last Modified: May 4, 2025
+# Last Modified: May 5, 2025
 
 # ============================================== #
 # ---- Set-Up ----
@@ -35,54 +35,6 @@ options(ggimage.usemagick = TRUE)
 ## ---- Local Sources ----
 source("aesthetics.R")
 source("about_page.R")
-
-## ---- Constants ----
-labels <- c("Group Stage Match 1",
-                       "Group Stage Match 2", 
-                       "Group Stage Match 3",
-                       "Round of 16",
-                       "Quarterfinal", 
-                       "Semifinal",
-                       "Final")
-
-icons <- iconList(
-  hainaut = makeIcon(
-    "hainaut.png",
-    iconWidth = 50
-  ),
-  delaune = makeIcon(
-    "delaune.png",
-    iconWidth = 50
-  ),
-  roazhon = makeIcon(
-    "roazhon.png",
-    iconWidth = 50
-  ),
-  allianz = makeIcon(
-    "allianz.png",
-    iconWidth = 50
-  ),
-  alps = makeIcon(
-    "alps.png",
-    iconWidth = 50
-  ),
-  princes = makeIcon(
-    "princes.png",
-    iconWidth = 50
-  ),
-  oceane = makeIcon(
-    "oceane.png",
-    iconWidth = 50
-  ),
-  mosson = makeIcon(
-    "mosson.png",
-    iconWidth = 50
-  ),
-  groupama = makeIcon(
-    "groupama.png",
-    iconWidth = 50
-  )
-)
 
 ## ---- Data -----
 shots <- read.csv("data/shots.csv")
