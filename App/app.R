@@ -1,3 +1,17 @@
+# ============================================== #
+# File: app.R
+# Description: Shiny web application built with R.
+#              This file contains both the UI and server logic.
+#
+# Author: Bianca Schutz
+# Date Created: April 24, 2025
+# Last Modified: May 4, 2025
+
+# ============================================== #
+# ---- Set-Up ----
+# ============================================== #
+
+## ---- Packages ----
 library(shiny)
 library(shinythemes)
 library(ggplot2)
@@ -12,14 +26,17 @@ library(ggimage)
 library(viridis)
 library(magick)
 library(grid)
+library(leaflet)
+library(leaflet.providers)
 
+## ---- Set Options ----
 options(ggimage.usemagick = TRUE)
 
+## ---- Local Sources ----
 source("aesthetics.R")
 source("about_page.R")
 
-# LOAD IN DATA
-
+## ---- Constants ----
 labels <- c("Group Stage Match 1",
                        "Group Stage Match 2", 
                        "Group Stage Match 3",
@@ -28,6 +45,46 @@ labels <- c("Group Stage Match 1",
                        "Semifinal",
                        "Final")
 
+icons <- iconList(
+  hainaut = makeIcon(
+    "hainaut.png",
+    iconWidth = 50
+  ),
+  delaune = makeIcon(
+    "delaune.png",
+    iconWidth = 50
+  ),
+  roazhon = makeIcon(
+    "roazhon.png",
+    iconWidth = 50
+  ),
+  allianz = makeIcon(
+    "allianz.png",
+    iconWidth = 50
+  ),
+  alps = makeIcon(
+    "alps.png",
+    iconWidth = 50
+  ),
+  princes = makeIcon(
+    "princes.png",
+    iconWidth = 50
+  ),
+  oceane = makeIcon(
+    "oceane.png",
+    iconWidth = 50
+  ),
+  mosson = makeIcon(
+    "mosson.png",
+    iconWidth = 50
+  ),
+  groupama = makeIcon(
+    "groupama.png",
+    iconWidth = 50
+  )
+)
+
+## ---- Data -----
 shots <- read.csv("data/shots.csv")
 
 top_scorers <- read.csv("data/top_scorers.csv")
@@ -40,32 +97,49 @@ wwcevents <- read.csv("data/wwcevents.csv")
 
 prizes <- read.csv("data/prizes.csv") %>% rename("prize_money" = "Prize.Money..millions.USD.")
 
+stadiums <- read.csv("data/stadiums.csv")
+
 player_opts <- unique(wwcevents$player.name)
 
-############### UI ####################
+# ============================================== #
+# ---- UI ----
+# ============================================== #
 
 ui <- page_navbar(
+  
+  ## ---- Title and Aesthetics ----
   title = app_title,
   theme = bs_theme(version = 5, bootswatch = "journal"),
   header = tagList(red_card, image_settings,
   tags$head(tags$link(rel = "stylesheet", 
                       type = "text/css", 
                       href = "custom.css"))),
+  
+  # ---- About Panel ----
+  # see the about_page.R file
   about_panel,
-  nav_panel(title = "Beyond the Numbers", 
+  
+  # ---- USWNT: By the Numbers ----
+  nav_panel(title = "USWNT: By the Numbers", 
             fluidPage(
               img(
                 src = "wwc2.jpeg", 
                 class = "full-width-image"),
+              
+  ## ---- USWNT Performance Card ----
               card(
                 h1("Measuring the USWNT's Performance"),  
                 class = "red-card"),
               card(
                 h1("A Historic Fourth Star"), 
                 p_4th_star),
+  
+  ## ---- Shot Map ----
+  card(h1(
+    "How accurate were the USWNT's shots?"),
+    class = "red-card"),
               layout_columns(
                 card(
-                  card_header("How accurate were the USWNT's shots?"), 
                   card_body(selectInput("game", 
                                         label = "Select a Game", 
                                         choices = labels, 
@@ -73,44 +147,83 @@ ui <- page_navbar(
                             plotOutput("shots"))),
                 p_shots, 
                 col_widths = c(7, 5)),
+  
+  ## ---- Top Scorers Bar Chart ----
               card(
                 card_body(
                   plotOutput("scorers")
                   )),
+  
+  ## ---- Heat Map ----
+  card(h1(
+    "Understand Player Impact"),
+    class = "red-card"),
               layout_columns(
-                card(
-                  card_header("Understand Player Impact"), 
-                  selectInput("player", 
-                              label = "Select a Player", 
+                  card(selectInput("player", 
+                              label = "Select a Player:", 
                               choices = player_opts, 
                               selected = "Megan Anna Rapinoe"), 
                   selectInput("heatmap", 
-                              label = "Select an Action", 
+                              label = "Select an Action:", 
                               choices = c("All", "Pass", "Shot", "Dribble", "Carry"), 
-                              selected = "All"),
-                  plotOutput("heat")
-                  )),
+                              selected = "All")),
+                  card(plotOutput("heat")),
+                  col_widths = c(3, 9)
+                  ))),
+  # ---- About The Tournament ----
+  nav_panel(title = "The Tournament", 
+            fluidPage(
+                HTML('
+    <iframe src="https://flo.uri.sh/visualisation/23001060/embed" 
+            title="Interactive or visual content" 
+            class="flourish-embed-iframe" 
+            frameborder="0" 
+            scrolling="no" 
+            style="width:100%;height:600px;" 
+            sandbox="allow-same-origin allow-forms allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation">
+    </iframe>
+    <div style="width:100%!;margin-top:4px!important;text-align:right!important;">
+      <a class="flourish-credit" href="https://public.flourish.studio/visualisation/23001060/?utm_source=embed&utm_campaign=visualisation/23001060" target="_top" style="text-decoration:none!important">
+        <img alt="Made with Flourish" src="https://public.flourish.studio/resources/made_with_flourish.svg" style="width:105px!important;height:16px!important;border:none!important;margin:0!important;">
+      </a>
+    </div>
+  '),
               card(
-                h1("Visualizing the Tournament's Growth"), 
-                class = "red-card"),
-              layout_columns(
-                card(
-                  plotOutput("viewmap")
-                  ),
-                p_map),
+              h1("The Hosts"), 
+              class = "red-card"),
               card(
-                h1("Understanding The Need For Change"), 
-                class = "red-card"), 
-              layout_columns(
-                card(
-                  plotlyOutput("plotly1")),
-                card(
-                  p_prize),
-                col_widths = c(8, 4))))
+                leafletOutput("leaf"),
+                full_screen = TRUE
+              ),
+  ## ---- Viewership Map ----
+            card(
+              h1("Visualizing the Tournament's Growth"), 
+              class = "red-card"),
+            layout_columns(
+              card(
+                plotOutput("viewmap")
+              ),
+              p_map),
+            
+            ## ---- Plotly Prize Money ----
+            card(
+              h1("Understanding The Need For Change"), 
+              class = "red-card"), 
+            layout_columns(
+              card(
+                plotlyOutput("plotly1")),
+              card(
+                p_prize),
+              col_widths = c(8, 4))))
 )
 
-############### SERVER ####################
+# ============================================== #
+# ---- SERVER ----
+# ============================================== #
+
 server <- function(input, output) {
+  
+  ## ---- Shot Map ----
   output$shots <- renderPlot({
     req(input$game)
     match_info <- uswnt_games %>% dplyr::filter(label == input$game)
@@ -132,6 +245,8 @@ server <- function(input, output) {
       pitch_theme
   })
   
+  ## ---- Top Scorers Bar Chart ----
+  
   output$scorers <- renderPlot({
     ggplot(top_scorers) +
       geom_col(aes(fill = file, 
@@ -146,6 +261,8 @@ server <- function(input, output) {
             legend.position = "none")
   })
 
+  ## ---- Viewership Map ----
+  
   output$viewmap <- renderPlot({
 
     ggplot() +
@@ -156,6 +273,8 @@ server <- function(input, output) {
 
   })
 
+## ---- Plotly Prize Money ----
+  
   output$plotly1 <- renderPlotly({
     p <- ggplot(prizes, aes(x = Tournament, y = prize_money, text = Position, text2 = Amount)) +
       geom_col(aes(fill = Position)) +
@@ -165,6 +284,7 @@ server <- function(input, output) {
     ggplotly(p, tooltip = c("text", "text2"))
   })
 
+## ---- Heat Map ----
   output$heat <- renderPlot({
   req(input$heatmap)
   req(input$player)
@@ -186,12 +306,24 @@ server <- function(input, output) {
       ggsoccer::annotate_pitch(dimensions = ggsoccer::pitch_statsbomb) +
       geom_density_2d_filled(h = c(7, 7), n = 300, bins = 10,
                              aes(alpha = after_stat(level))) +
-      scale_alpha_manual(values = c(0, rep(1, 9))) +  # 0 level transparent, others semi-transparent
+      scale_alpha_manual(values = c(0, rep(1, 9))) +  
       guides(alpha = "none") +
       theme(legend.position = "none") +
       ggsoccer::theme_pitch() +
       scale_fill_viridis_d(option = "plasma") +
       labs(title = title)
+  })
+
+## ---- Leaflet map ----
+  output$leaf <- renderLeaflet({
+    leaflet(stadiums) %>%
+      setView(lng = 2.2137, lat = 47.5, zoom = 5) %>%  
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      addMarkers(
+        ~Longitude, ~Latitude,
+        icon = ~icons[icon_key],
+        label = ~Stadium
+      )
   })
 }
 # Run the application 

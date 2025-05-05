@@ -143,3 +143,59 @@ library(RSQLite)
 # prizes <- dbGetQuery(con, statement = "SELECT * FROM prizes")
 
 # write.csv(prizes, "prizes.csv")
+
+## 1.8 Creating Stadiums DataFrame
+
+library(httr)
+library(jsonlite)
+
+stadium_addresses <- c(
+  "Stade du Hainaut" = "1 Rue du Hainaut, 59300 Valenciennes, France",
+  "Stade Auguste-Delaune II" = "51 Boulevard de la Paix, 51100 Reims, France",
+  "Roazhon Park" = "111 Route de Lorient, 35000 Rennes, France",
+  "Allianz Riviera" = "Boulevard des Jardiniers, 06200 Nice, France",
+  "Stade des Alpes" = "Avenue de Valmy, 38000 Grenoble, France",
+  "Parc des Princes" = "24 Rue du Commandant Guilbaud, 75016 Paris, France",
+  "Stade Océane" = "1 Boulevard de Leningrad, 76600 Le Havre, France",
+  "Stade de la Mosson" = "345 Avenue de Heidelberg, 34080 Montpellier, France",
+  "Groupama Stadium" = "10 Avenue Simone Veil, 69150 Décines-Charpieu, France"
+)
+
+
+get_lat_long_nominatim <- function(address) {
+  base_url <- "https://nominatim.openstreetmap.org/search"
+  response <- GET(base_url, query = list(q = address, format = "json"))
+  content <- fromJSON(content(response, "text"), flatten = TRUE)
+  
+  if (length(content) > 0) {
+    lat <- as.numeric(content[1,]$lat)
+    lon <- as.numeric(content[1,]$lon)
+    return(c(lat, lon))
+  } else {
+    return(c(NA, NA))
+  }
+}
+
+stadium_coords <- sapply(stadium_addresses, get_lat_long_nominatim)
+
+stadium_coords_df <- data.frame(
+  Stadium = names(stadium_addresses),
+  Latitude = stadium_coords[1,],
+  Longitude = stadium_coords[2,]
+)
+
+stadium_icon_keys <- c(
+  "Stade du Hainaut" = "hainaut",
+  "Stade Auguste-Delaune II" = "delaune",
+  "Roazhon Park" = "roazhon",
+  "Allianz Riviera" = "allianz",
+  "Stade des Alpes" = "alps",
+  "Parc des Princes" = "princes",
+  "Stade Océane" = "oceane",
+  "Stade de la Mosson" = "mosson",
+  "Groupama Stadium" = "groupama"
+)
+
+stadium_coords_df$icon_key <- stadium_icon_keys[stadium_coords_df$Stadium]
+
+# write.csv(stadium_coords_df, "stadiums.csv")
