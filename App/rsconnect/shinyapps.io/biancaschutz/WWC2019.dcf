@@ -5,7 +5,7 @@ account: biancaschutz
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 14660690
-bundleId: 10211519
+bundleId: 10231125
 url: https://biancaschutz.shinyapps.io/WWC2019/
 version: 1
 asMultiple: FALSE
